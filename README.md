@@ -33,7 +33,7 @@ npm install<br>
 npm start<br>
 The application will open in your browser, typically at http://localhost:3000.
 
-I have deployed it in render and the url is : https://ai-resume-generator-0orm.onrender.com<br>
+I have deployed it in render and the url is : https://ai-resume-generator-4u9k.onrender.com <br>
 
 Incase if you running this locally, kindly do the following change:<br>
   In App.js inside src in frontend directory, change the fetch command in line 37 from https://ai-resume-generator-ta2j.onrender.com to http://localhost:5000/api/optimize. <br>
