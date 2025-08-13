@@ -36,7 +36,8 @@ The application will open in your browser, typically at http://localhost:3000.
 I have deployed it in render and the url is : https://ai-resume-generator-0orm.onrender.com<br>
 
 Incase if you running this locally, kindly do the following change:<br>
-  in App.js inside src in frontend directory, change the fetch command to http://localhost:5000/api/optimize. <br>
+  In App.js inside src in frontend directory, change the fetch command in line 37 from https://ai-resume-generator-ta2j.onrender.com to http://localhost:5000/api/optimize. <br>
+  In package.json in frontend directory, change the line 17 to "start": "react-scripts start"
   This enables the program to run locally. 
 
 
