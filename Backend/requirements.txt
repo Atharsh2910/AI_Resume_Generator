@@ -3,3 +3,4 @@ Flask-Cors
 python-docx
 pdfplumber
 google-generativeai
+gunicorn
