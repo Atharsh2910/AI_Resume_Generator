@@ -1,3 +1,4 @@
+# app.py
 import os
 import io
 import json
@@ -11,9 +12,8 @@ import google.generativeai as genai
 genai.configure(api_key=os.environ.get("GEMINI_API_KEY", ""))
 
 app = Flask(__name__)
-CORS(app, resources={r"/api/*": {"origins": "http://localhost:3000"}})
+CORS(app, resources={r"/api/*": {"origins": "*"}})
 
-# Define the folder to temporarily save uploaded files
 UPLOAD_FOLDER = 'uploads'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -30,7 +30,6 @@ def parse_resume_to_text(file_stream, filename):
                     text += page.extract_text() or ""
         except Exception as e:
             return f"Error parsing PDF: {e}"
-
     elif filename.endswith('.docx'):
         try:
             doc = docx.Document(file_stream)
@@ -44,7 +43,10 @@ def parse_resume_to_text(file_stream, filename):
     return text
 
 def analyze_and_optimize(resume_text, job_description):
-
+    """
+    Uses the Gemini API to analyze the resume and job description
+    and generate an optimized resume.
+    """
     try:
         model = genai.GenerativeModel('gemini-2.5-flash-preview-05-20')
 
