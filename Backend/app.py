@@ -1,3 +1,4 @@
+# app.py
 import os
 import io
 import json
@@ -7,22 +8,32 @@ from werkzeug.utils import secure_filename
 import docx
 import pdfplumber
 import google.generativeai as genai
+from dotenv import load_dotenv
 
-genai.configure(api_key=os.environ.get("GEMINI_API_KEY", ""))
+# Load environment variables from the .env file
+load_dotenv()
+
+# Configure your Gemini API key here
+# The API key will be automatically provided by the Canvas environment.
+# DO NOT hardcode your API key here.
+gemini_api_key = os.environ.get("GEMINI_API_KEY", None)
+if not gemini_api_key:
+    # A more descriptive error for when the API key is not found
+    print("Error: The GEMINI_API_KEY environment variable is not set.")
+    exit()
+
+genai.configure(api_key=gemini_api_key)
 
 app = Flask(__name__)
-CORS(app, resources={r"/api/*": {"origins": "http://localhost:3000"}})
-
-# Define the folder to temporarily save uploaded files
-UPLOAD_FOLDER = 'uploads'
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+# Allow CORS for all origins, which is necessary for production deployment.
+CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 def parse_resume_to_text(file_stream, filename):
     """
     Parses a resume file (PDF or DOCX) and returns its text content.
     """
     text = ""
+    # Check for PDF file
     if filename.endswith('.pdf'):
         try:
             with pdfplumber.open(file_stream) as pdf:
@@ -31,6 +42,7 @@ def parse_resume_to_text(file_stream, filename):
         except Exception as e:
             return f"Error parsing PDF: {e}"
 
+    # Check for DOCX file
     elif filename.endswith('.docx'):
         try:
             doc = docx.Document(file_stream)
