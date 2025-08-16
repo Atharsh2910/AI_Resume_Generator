@@ -1,7 +1,5 @@
 Flask
 Flask-Cors
-python-docx
-pdfplumber
 google-generativeai
 gunicorn
 python-dotenv
