@@ -11,9 +11,9 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-gemini_api_key = os.getenv("GEMINI_API_KEY", None)
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", None)
 
-genai.configure(api_key=gemini_api_key)
+genai.configure(api_key=GEMINI_API_KEY)
 
 app = Flask(__name__)
 CORS(app, resources={r"/api/*": {"origins": "*"}})
