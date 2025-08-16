@@ -16,15 +16,12 @@ load_dotenv()
 # Configure your Gemini API key here
 # The API key will be automatically provided by the Canvas environment.
 # DO NOT hardcode your API key here.
-gemini_api_key = os.environ.get("GEMINI_API_KEY", None)
-if not gemini_api_key:
-    # A more descriptive error for when the API key is not found
-gemini_api_key = os.getenv("GEMINI_API_KEY")
-if not gemini_api_key:
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", None)
+if not GEMINI_API_KEY:
     print("Error: The GEMINI_API_KEY environment variable is not set.")
     exit()
 
-genai.configure(api_key=gemini_api_key)
+genai.configure(api_key=GEMINI_API_KEY)
 
 app = Flask(__name__)
 # Allow CORS for all origins, which is necessary for production deployment.
