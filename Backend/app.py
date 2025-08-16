@@ -16,33 +16,25 @@ genai.configure(api_key=GEMINI_API_KEY)
 app = Flask(__name__)
 CORS(app, resources={r"/api/*": {"origins": "*"}})
 
-def parse_resume_to_text(file_stream, filename):
+def parse_resume_to_text(file_content, filename):
     """
-    Parses a resume file (PDF or DOCX) and returns its text content.
+    Uses the Gemini API to parse a resume file (PDF or DOCX) and return its text content.
     """
-    text = ""
-    if filename.endswith('.pdf'):
-        try:
-            with pdfplumber.open(file_stream) as pdf:
-                for page in pdf.pages:
-                    text += page.extract_text() or ""
-        except Exception as e:
-            return f"Error parsing PDF: {e}"
-
-    elif filename.endswith('.docx'):
-        try:
-            doc = docx.Document(file_stream)
-            for paragraph in doc.paragraphs:
-                text += paragraph.text + "\n"
-        except Exception as e:
-            return f"Error parsing DOCX: {e}"
-    else:
-        return "Unsupported file format. Please upload a PDF or DOCX."
-    
-    return text
+    try:
+        model = genai.GenerativeModel('gemini-2.5-flash-preview-05-20')
+        prompt = f"Extract all the text content from the following resume file named {filename}. Return the raw, unformatted text."
+        
+        response = model.generate_content([prompt, file_content])
+        return response.text
+    except Exception as e:
+        app.logger.error(f"Gemini API parsing failed: {e}")
+        return f"Error parsing file with AI: {e}"
 
 def analyze_and_optimize(resume_text, job_description):
-
+    """
+    Uses the Gemini API to analyze the resume and job description
+    and generate an optimized resume.
+    """
     try:
         model = genai.GenerativeModel('gemini-2.5-flash-preview-05-20')
 
@@ -67,9 +59,19 @@ def analyze_and_optimize(resume_text, job_description):
         **Job Description:**
         {job_description}
         """
-
-        response = model.generate_content(prompt)
         
+        response = None
+        for i in range(5):
+            try:
+                response = model.generate_content(prompt)
+                break
+            except Exception as e:
+                app.logger.warning(f"Gemini API call failed, retrying... Attempt {i+1}/5. Error: {e}")
+                time.sleep(2 ** i)
+        
+        if not response:
+            return {"error": "Failed to get a response from the Gemini API after multiple retries."}
+
         response_json_str = response.text.strip('` \n').replace('json\n', '', 1)
         
         try:
@@ -102,9 +104,9 @@ def optimize_resume():
         return jsonify({"error": "Job description is required"}), 400
 
     filename = secure_filename(resume_file.filename)
-    file_stream = io.BytesIO(resume_file.read())
+    file_content = resume_file.read()
 
-    resume_text = parse_resume_to_text(file_stream, filename)
+    resume_text = parse_resume_to_text(file_content, filename)
     if resume_text.startswith("Error"):
         return jsonify({"error": resume_text}), 500
     
