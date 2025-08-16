@@ -10,6 +10,7 @@ import pdfplumber
 import google.generativeai as genai
 from dotenv import load_dotenv
 
+<<<<<<< HEAD
 # Load environment variables from the .env file
 load_dotenv()
 
@@ -19,14 +20,26 @@ load_dotenv()
 gemini_api_key = os.environ.get("GEMINI_API_KEY", None)
 if not gemini_api_key:
     # A more descriptive error for when the API key is not found
+=======
+gemini_api_key = os.getenv("GEMINI_API_KEY")
+if not gemini_api_key:
+>>>>>>> fdde57208413d2c49b88c50be4461624f178a392
     print("Error: The GEMINI_API_KEY environment variable is not set.")
     exit()
 
 genai.configure(api_key=gemini_api_key)
 
 app = Flask(__name__)
+<<<<<<< HEAD
 # Allow CORS for all origins, which is necessary for production deployment.
 CORS(app, resources={r"/api/*": {"origins": "*"}})
+=======
+CORS(app, resources={r"/api/*": {"origins": "*"}})
+
+UPLOAD_FOLDER = 'uploads'
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+>>>>>>> fdde57208413d2c49b88c50be4461624f178a392
 
 def parse_resume_to_text(file_stream, filename):
     """
@@ -41,7 +54,10 @@ def parse_resume_to_text(file_stream, filename):
                     text += page.extract_text() or ""
         except Exception as e:
             return f"Error parsing PDF: {e}"
+<<<<<<< HEAD
 
+=======
+>>>>>>> fdde57208413d2c49b88c50be4461624f178a392
     # Check for DOCX file
     elif filename.endswith('.docx'):
         try:
@@ -56,10 +72,15 @@ def parse_resume_to_text(file_stream, filename):
     return text
 
 def analyze_and_optimize(resume_text, job_description):
-
+    """
+    Uses the Gemini API to analyze the resume and job description
+    and generate an optimized resume.
+    """
     try:
         model = genai.GenerativeModel('gemini-2.5-flash-preview-05-20')
 
+        # This is the core prompt design. We instruct the model to act as a
+        # professional resume writer and perform a series of tasks.
         prompt = f"""
         You are a highly skilled AI resume optimizer and career coach. Your task is to analyze a candidate's resume and a target job description.
 
@@ -84,6 +105,8 @@ def analyze_and_optimize(resume_text, job_description):
 
         response = model.generate_content(prompt)
         
+        # The API response is expected to be a stringified JSON object.
+        # We need to parse it back into a Python dictionary.
         response_json_str = response.text.strip('` \n').replace('json\n', '', 1)
         
         try:
@@ -118,13 +141,20 @@ def optimize_resume():
     filename = secure_filename(resume_file.filename)
     file_stream = io.BytesIO(resume_file.read())
 
+    # Parse resume to text
     resume_text = parse_resume_to_text(file_stream, filename)
     if resume_text.startswith("Error"):
         return jsonify({"error": resume_text}), 500
     
+    # Call the AI model for optimization
     response_data = analyze_and_optimize(resume_text, job_description)
 
     return jsonify(response_data)
 
 if __name__ == '__main__':
+<<<<<<< HEAD
     app.run(debug=True, port=5000)
+=======
+    # To run this file, use: python app.py
+    app.run(debug=True, port=5000)
+>>>>>>> fdde57208413d2c49b88c50be4461624f178a392

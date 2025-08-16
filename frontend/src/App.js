@@ -1,45 +1,38 @@
 import React, { useState } from 'react';
 
-// Main App component
 const App = () => {
-    // State variables to manage user input and application state
     const [resumeFile, setResumeFile] = useState(null);
     const [jobDescription, setJobDescription] = useState('');
     const [loading, setLoading] = useState(false);
     const [results, setResults] = useState(null);
     const [error, setError] = useState(null);
 
-    // Handle file selection
     const handleFileChange = (e) => {
         setResumeFile(e.target.files[0]);
     };
 
-    // Handle form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
         setResults(null);
         setError(null);
 
-        // Check if both files and job description are provided
         if (!resumeFile || !jobDescription) {
             setError("Please upload a resume and provide a job description.");
             setLoading(false);
             return;
         }
 
-        // Use FormData to send both the file and text to the backend
         const formData = new FormData();
         formData.append('resume', resumeFile);
         formData.append('job_description', jobDescription);
 
         try {
-            const response = await fetch('http://localhost:5000/api/optimize', {
+            const response = await fetch('https://ai-resume-generator-ta2j.onrender.com', {
                 method: 'POST',
                 body: formData,
             });
 
-            // Handle non-200 responses
             if (!response.ok) {
                 const errorData = await response.json();
                 throw new Error(errorData.error || 'Something went wrong with the API.');
@@ -54,7 +47,6 @@ const App = () => {
         }
     };
 
-    // JSX for the component
     return (
         <div className="main-container">
             <header className="header">
