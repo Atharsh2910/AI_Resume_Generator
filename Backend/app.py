@@ -17,7 +17,7 @@ GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", None)
 genai.configure(api_key=GEMINI_API_KEY)
 
 app = Flask(__name__)
-CORS(app, resources={r"/api/*": {"origins": "*"}}, supports_credentials=True)
+CORS(app, resources={r"/api/*": {"origins": ["https://ai-resume-generator-4u9k.onrender.com"]}})
 
 
 def parse_resume_to_text(file_content, filename):
