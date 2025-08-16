@@ -10,7 +10,6 @@ import pdfplumber
 import google.generativeai as genai
 from dotenv import load_dotenv
 
-<<<<<<< HEAD
 # Load environment variables from the .env file
 load_dotenv()
 
@@ -20,26 +19,21 @@ load_dotenv()
 gemini_api_key = os.environ.get("GEMINI_API_KEY", None)
 if not gemini_api_key:
     # A more descriptive error for when the API key is not found
-=======
 gemini_api_key = os.getenv("GEMINI_API_KEY")
 if not gemini_api_key:
->>>>>>> fdde57208413d2c49b88c50be4461624f178a392
     print("Error: The GEMINI_API_KEY environment variable is not set.")
     exit()
 
 genai.configure(api_key=gemini_api_key)
 
 app = Flask(__name__)
-<<<<<<< HEAD
 # Allow CORS for all origins, which is necessary for production deployment.
 CORS(app, resources={r"/api/*": {"origins": "*"}})
-=======
 CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 UPLOAD_FOLDER = 'uploads'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
->>>>>>> fdde57208413d2c49b88c50be4461624f178a392
 
 def parse_resume_to_text(file_stream, filename):
     """
@@ -54,10 +48,7 @@ def parse_resume_to_text(file_stream, filename):
                     text += page.extract_text() or ""
         except Exception as e:
             return f"Error parsing PDF: {e}"
-<<<<<<< HEAD
 
-=======
->>>>>>> fdde57208413d2c49b88c50be4461624f178a392
     # Check for DOCX file
     elif filename.endswith('.docx'):
         try:
@@ -152,9 +143,6 @@ def optimize_resume():
     return jsonify(response_data)
 
 if __name__ == '__main__':
-<<<<<<< HEAD
     app.run(debug=True, port=5000)
-=======
     # To run this file, use: python app.py
     app.run(debug=True, port=5000)
->>>>>>> fdde57208413d2c49b88c50be4461624f178a392
