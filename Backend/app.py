@@ -8,22 +8,16 @@ import docx
 import pdfplumber
 import google.generativeai as genai
 
-# Configure your Gemini API key here
-# The API key will be automatically provided by the Canvas environment.
-# DO NOT hardcode your API key here.
-gemini_api_key = os.environ.get("GEMINI_API_KEY", None)
+gemini_api_key = os.getenv("GEMINI_API_KEY")
 if not gemini_api_key:
-    # A more descriptive error for when the API key is not found
     print("Error: The GEMINI_API_KEY environment variable is not set.")
     exit()
 
 genai.configure(api_key=gemini_api_key)
 
 app = Flask(__name__)
-# Allow CORS for all origins, which is necessary for production deployment.
 CORS(app, resources={r"/api/*": {"origins": "*"}})
 
-# Define the folder to temporarily save uploaded files
 UPLOAD_FOLDER = 'uploads'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
