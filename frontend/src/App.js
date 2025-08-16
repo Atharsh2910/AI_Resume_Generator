@@ -28,7 +28,7 @@ const App = () => {
         formData.append('job_description', jobDescription);
 
         try {
-            const response = await fetch('https://ai-resume-generator-ta2j.onrender.com', {
+            const response = await fetch('https://ai-resume-generator-ta2j.onrender.com/api/optimize', {
                 method: 'POST',
                 body: formData,
             });
